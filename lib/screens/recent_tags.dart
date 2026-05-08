@@ -1,63 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+import 'package:nfctools/viewmodels/recent_tags_view_model.dart';
 
 class RecentTagsWindow extends StatefulWidget {
-  const RecentTagsWindow({super.key});
+  final RecentTagsViewModel viewModel;
+
+  const RecentTagsWindow({super.key, required this.viewModel});
+
   @override
   State<RecentTagsWindow> createState() => _RecentTagsWindowState();
 }
 
 class _RecentTagsWindowState extends State<RecentTagsWindow> {
-  List<NFCTag> tags = [];
-
   @override
   void initState() {
     super.initState();
-    setState(() {
-      getNFCTags();
-    });
+    widget.viewModel.loadTags();
   }
-
-  Future<List<NFCTag>> getNFCTags() async {
-    final pref = await SharedPreferences.getInstance();
-
-    List<String>? userTags = pref.getStringList('user_saved_tags') ?? [];
-
-    for (dynamic tag in userTags) {
-      Map<String, dynamic> tg = jsonDecode(tag);
-      this.tags.add(NFCTag.fromJson(tg));
-    }
-
-    return tags;
-  }
-
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ListView.builder(
-        itemCount: tags.length,
-        itemBuilder: (context, index) {
-          return RecentTag(tag: tags[index]);
-        })
+    return ListenableBuilder(
+      listenable: widget.viewModel,
+      builder: (context, _) {
+        if (widget.viewModel.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (widget.viewModel.tags.isEmpty) {
+          return const Center(child: Text('No saved tags.'));
+        }
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView.builder(
+            itemCount: widget.viewModel.tags.length,
+            itemBuilder: (context, index) {
+              return RecentTag(tag: widget.viewModel.tags[index]);
+            },
+          ),
+        );
+      },
     );
   }
 }
 
 class RecentTag extends StatelessWidget {
   final NFCTag tag;
-  RecentTag({Key? key, required this.tag}) : super(key: key);
+
+  const RecentTag({super.key, required this.tag});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: Row(
         children: <Widget>[
-          Icon(Icons.nfc_sharp),
-          Column(children: <Widget>[Text(tag.type.name), Text(tag.id)]),
+          const Icon(Icons.nfc_sharp),
+          Column(
+            children: <Widget>[Text(tag.type.name), Text(tag.id)],
+          ),
         ],
       ),
     );

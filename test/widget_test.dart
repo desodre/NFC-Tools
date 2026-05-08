@@ -6,15 +6,25 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nfctools/repositories/tag_repository.dart';
 import 'package:nfctools/screens/main_window.dart';
+import 'package:nfctools/viewmodels/app_view_model.dart';
+import 'package:nfctools/viewmodels/nfc_scan_view_model.dart';
+import 'package:nfctools/viewmodels/recent_tags_view_model.dart';
 
 void main() {
   testWidgets('main_window smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const NfcModelApp());
+    final repository = TagRepository();
+    final recentTagsViewModel = RecentTagsViewModel(repository);
+    final nfcScanViewModel = NfcScanViewModel(repository);
+    final appViewModel = AppViewModel(repository, recentTagsViewModel);
 
-    // Verify that our counter starts at 0.
-    expect(find.text('Hello, world'), findsOneWidget);
+    await tester.pumpWidget(NfcModelApp(
+      appViewModel: appViewModel,
+      nfcScanViewModel: nfcScanViewModel,
+      recentTagsViewModel: recentTagsViewModel,
+    ));
 
+    expect(find.text('NFC Tools'), findsOneWidget);
   });
 }
