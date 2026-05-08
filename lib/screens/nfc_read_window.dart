@@ -30,7 +30,7 @@ class _NfcReadWindowState extends State<NfcReadWindow> {
     final tag = widget.viewModel.tag!;
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         title: const Text('Tag Info:'),
         contentPadding: const EdgeInsets.all(2),
         content: NfcCatalogInfo(
@@ -41,7 +41,7 @@ class _NfcReadWindowState extends State<NfcReadWindow> {
           },
         ),
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.all(Radius.circular(8)),
+          borderRadius: BorderRadius.all(Radius.circular(8)),
         ),
       ),
     );

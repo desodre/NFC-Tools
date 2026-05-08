@@ -2,31 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
 import 'package:nfctools/models/text_style.dart';
 
-class NfcCatalogInfo extends StatelessWidget {
+class NfcCatalogInfo extends StatefulWidget {
   final NFCTag tag;
   final VoidCallback onSave;
 
   const NfcCatalogInfo({super.key, required this.tag, required this.onSave});
 
   @override
+  State<NfcCatalogInfo> createState() => _NfcCatalogInfoState();
+}
+
+class _NfcCatalogInfoState extends State<NfcCatalogInfo> {
+  @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        NfcCardInfo(title: 'App Data', info: '${tag.applicationData}'),
-        NfcCardInfo(title: 'ATQA', info: '${tag.atqa}'),
-        NfcCardInfo(title: 'Manufacturer', info: '${tag.manufacturer}'),
-        NfcCardInfo(title: 'Mifare Block Count', info: '${tag.mifareInfo?.blockCount}'),
-        NfcCardInfo(title: 'Mifare Type', info: '${tag.mifareInfo?.type}'),
-        NfcCardInfo(title: 'Mifare Size', info: '${tag.mifareInfo?.size}'),
-        NfcCardInfo(title: 'Writable', info: '${tag.ndefWritable}'),
-        NfcCardInfo(title: 'DSF ID', info: '${tag.dsfId}'),
-        NfcCardInfo(title: 'HiLayer Response', info: '${tag.hiLayerResponse}'),
-        NfcCardInfo(title: 'ID', info: tag.id),
-        NfcCardInfo(title: 'Protocol', info: '${tag.protocolInfo}'),
-        NfcCardInfo(title: 'Standard', info: tag.standard),
-        NfcCardInfo(title: 'Type', info: tag.type.name),
-        ElevatedButton(onPressed: onSave, child: const Text('Save')),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          NfcCardInfo(title: 'App Data', info: '${widget.tag.applicationData}'),
+          NfcCardInfo(title: 'ATQA', info: '${widget.tag.atqa}'),
+          NfcCardInfo(title: 'Manufacturer', info: '${widget.tag.manufacturer}'),
+          NfcCardInfo(title: 'Mifare Block Count', info: '${widget.tag.mifareInfo?.blockCount}'),
+          NfcCardInfo(title: 'Mifare Type', info: '${widget.tag.mifareInfo?.type}'),
+          NfcCardInfo(title: 'Mifare Size', info: '${widget.tag.mifareInfo?.size}'),
+          NfcCardInfo(title: 'Writable', info: '${widget.tag.ndefWritable}'),
+          NfcCardInfo(title: 'DSF ID', info: '${widget.tag.dsfId}'),
+          NfcCardInfo(title: 'HiLayer Response', info: '${widget.tag.hiLayerResponse}'),
+          NfcCardInfo(title: 'ID', info: widget.tag.id),
+          NfcCardInfo(title: 'Protocol', info: '${widget.tag.protocolInfo}'),
+          NfcCardInfo(title: 'Standard', info: widget.tag.standard),
+          NfcCardInfo(title: 'Type', info: widget.tag.type.name),
+          ElevatedButton(onPressed: widget.onSave, child: const Text('Save')),
+        ],
+      ),
     );
   }
 }
